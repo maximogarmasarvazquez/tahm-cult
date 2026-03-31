@@ -2,16 +2,16 @@ import { supabase } from "@/lib/supabase";
 import { Post } from "@/types";
 
 export const postsService = {
-  // Obtener todos los posts, opcionalmente filtrando por cliente
+  // ✅ Obtener todos los posts
   getAll: async (clientId?: string): Promise<Post[]> => {
     let query = supabase
       .from("posts")
       .select(`
         *,
-        styles(*),
+        style:styles(*),
         post_media(*)
       `)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false }); // ✅ FIX
 
     if (clientId) {
       query = query.eq("client_id", clientId);
@@ -26,7 +26,7 @@ export const postsService = {
     return data as Post[];
   },
 
-  // Crear un post
+  // ✅ Crear post
   create: async (post: Partial<Post>): Promise<Post> => {
     const { data, error } = await supabase
       .from("posts")
@@ -41,7 +41,7 @@ export const postsService = {
     return data as Post;
   },
 
-  // Actualizar un post
+  // ✅ Actualizar post
   update: async (id: string, post: Partial<Post>): Promise<Post> => {
     const { data, error } = await supabase
       .from("posts")
@@ -57,8 +57,19 @@ export const postsService = {
     return data as Post;
   },
 
-  // Eliminar un post
+  // ✅ Eliminar post + media
   delete: async (id: string): Promise<void> => {
+    // 🔥 borrar media primero
+    const { error: mediaError } = await supabase
+      .from("post_media")
+      .delete()
+      .eq("post_id", id);
+
+    if (mediaError) {
+      throw new Error(mediaError.message);
+    }
+
+    // 🔥 borrar post
     const { error } = await supabase
       .from("posts")
       .delete()

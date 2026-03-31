@@ -1,5 +1,3 @@
-// types/index.ts
-
 export interface Style {
   id: string;
   name: string;
@@ -13,9 +11,9 @@ export interface Style {
 export interface PostMedia {
   id: string;
   type: "image" | "video";
-  url?: string | null;           // imagen (Supabase)
-  external_url?: string | null;  // video (YouTube, etc)
-  sort_order?: number;
+  url: string | null;
+  external_url: string | null;
+  sort_order: number;
 }
 
 export interface Post {
@@ -28,7 +26,6 @@ export interface Post {
   client_id?: string | null;
   style_id?: string | null;
 
-  // relaciones
-  style?: Style | null;          // 🔥 ahora es uno solo
-  post_media?: PostMedia[];      // 🔥 reemplaza post_images
+  style?: Style | null;
+  post_media?: PostMedia[];
 }

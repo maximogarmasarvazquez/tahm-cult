@@ -3,24 +3,41 @@
 import React, { useState } from "react";
 import { postsService } from "@/services/posts.service";
 import { postMediaService } from "@/services/postMedia.service";
-import { uploadImage } from "@/services/uploadImage.service"; // 🔥 tu service para imágenes
-import { Style } from "@/types";
+import { uploadImage } from "@/services/uploadImage.service";
+import { Style, Post } from "@/types";
 import { useRouter } from "next/navigation";
 
 interface Props {
   styles: Style[];
-  clientId: string; // 🔥 obligatorio para asignar el post al cliente
+  clientId: string;
+
+  mode: "create" | "edit"; // 🔥 clave
+  post?: Post; // 🔥 solo para edit
+
+  onClose?: () => void;
+  onUpdated?: (post: Post) => void;
 }
 
-export default function PostForm({ styles, clientId }: Props) {
+export default function PostForm({
+  styles,
+  clientId,
+  mode,
+  post,
+  onClose,
+  onUpdated,
+}: Props) {
   const router = useRouter();
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [styleId, setStyleId] = useState<string | null>(null);
+  // 🔥 estados iniciales dinámicos
+  const [title, setTitle] = useState(post?.title || "");
+  const [description, setDescription] = useState(post?.description || "");
+  const [category, setCategory] = useState(post?.category || "");
+  const [styleId, setStyleId] = useState<string | null>(
+    post?.style_id || null
+  );
+
   const [file, setFile] = useState<File | null>(null);
-  const [externalUrl, setExternalUrl] = useState<string>(""); // 🔹 para videos
+  const [externalUrl, setExternalUrl] = useState("");
 
   const selectedStyle = styles.find((s) => s.id === styleId);
 
@@ -28,21 +45,45 @@ export default function PostForm({ styles, clientId }: Props) {
     e.preventDefault();
 
     try {
-      // 🔹 1. Crear post
-      const post = await postsService.create({
-        title,
-        description,
-        category,
-        style_id: styleId,
-        client_id: clientId,
-      });
+      let currentPost = post;
 
-      // 🔹 2. Subir imagen si hay file
+      // 🆕 CREATE
+      if (mode === "create") {
+        currentPost = await postsService.create({
+          title,
+          description,
+          category,
+          style_id: styleId,
+          client_id: clientId,
+        });
+      }
+
+      // ✏️ UPDATE
+      if (mode === "edit" && post) {
+        await postsService.update(post.id, {
+          title,
+          description,
+          category,
+          style_id: styleId,
+        });
+
+        currentPost = {
+          ...post,
+          title,
+          description,
+          category,
+          style_id: styleId,
+        };
+      }
+
+      if (!currentPost) return;
+
+      // 📷 imagen
       if (file) {
         const imageUrl = await uploadImage(file);
 
         await postMediaService.create({
-          post_id: post.id,
+          post_id: currentPost.id,
           type: "image",
           url: imageUrl,
           external_url: null,
@@ -50,10 +91,10 @@ export default function PostForm({ styles, clientId }: Props) {
         });
       }
 
-      // 🔹 3. Guardar video externo si hay URL
+      // 🎥 video
       if (externalUrl) {
         await postMediaService.create({
-          post_id: post.id,
+          post_id: currentPost.id,
           type: "video",
           url: null,
           external_url: externalUrl,
@@ -61,23 +102,33 @@ export default function PostForm({ styles, clientId }: Props) {
         });
       }
 
-      // 🔹 reset
-      setTitle("");
-      setDescription("");
-      setCategory("");
-      setStyleId(null);
-      setFile(null);
-      setExternalUrl("");
+      // 🔥 comportamiento según modo
+      if (mode === "create") {
+        resetForm();
+        router.refresh();
+      }
 
-      router.refresh();
+      if (mode === "edit" && onUpdated) {
+        onUpdated(currentPost);
+        onClose?.();
+      }
     } catch (err) {
       console.error("Error:", err);
     }
   };
 
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setCategory("");
+    setStyleId(null);
+    setFile(null);
+    setExternalUrl("");
+  };
+
   return (
     <div className="space-y-6">
-      {/* 🎨 STYLE SELECT */}
+      {/* 🎨 STYLE */}
       <select
         value={styleId ?? ""}
         onChange={(e) => setStyleId(e.target.value)}
@@ -100,19 +151,10 @@ export default function PostForm({ styles, clientId }: Props) {
           fontFamily: selectedStyle?.font_family || "inherit",
         }}
       >
-        <h2 className="text-xl font-bold">{title || "Título preview"}</h2>
+        <h2 className="text-xl font-bold">
+          {title || "Título preview"}
+        </h2>
         <p>{description || "Descripción preview..."}</p>
-        {externalUrl && (
-          <iframe
-            width="100%"
-            height="200"
-            src={externalUrl}
-            title="Video preview"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        )}
       </div>
 
       {/* 🧾 FORM */}
@@ -138,22 +180,20 @@ export default function PostForm({ styles, clientId }: Props) {
           className="border p-2 w-full"
         />
 
-        {/* 📷 IMAGEN */}
         <input
           type="file"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
         />
 
-        {/* 🎥 VIDEO */}
         <input
-          placeholder="Enlace de video (opcional)"
+          placeholder="Enlace de video"
           value={externalUrl}
           onChange={(e) => setExternalUrl(e.target.value)}
           className="border p-2 w-full"
         />
 
         <button className="bg-black text-white px-4 py-2 rounded">
-          Crear Post
+          {mode === "create" ? "Crear Post" : "Guardar cambios"}
         </button>
       </form>
     </div>
