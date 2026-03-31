@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎨 Tahm Cult
 
-## Getting Started
+**Tahm Cult** es una plataforma web diseñada para artistas y emprendedores que necesitan mostrar su trabajo de forma profesional, moderna y personalizable.
 
-First, run the development server:
+Pensado especialmente para tatuadores, marcas de ropa y creadores visuales, Tahm Cult permite tener una presencia online atractiva sin necesidad de conocimientos técnicos.
 
-```bash
+---
+
+## 🚀 Demo
+
+🚧 Proyecto en desarrollo
+
+---
+
+## ✨ Características principales
+
+* 🖼️ Galería visual moderna para mostrar trabajos
+* 🎨 Personalización de estilos (colores, tipografía, layouts)
+* 📦 Gestión de contenido (posts, imágenes, categorías)
+* ⚡ Rendimiento optimizado con Next.js
+* 🔐 Panel de administración privado (solo admins)
+* ☁️ Backend integrado con Supabase
+
+---
+
+## 🎯 Objetivo del proyecto
+
+Crear una solución lista para vender a:
+
+* Tatuadores
+* Marcas de ropa
+* Artistas digitales
+* Emprendedores creativos
+
+La idea es ofrecer una web profesional lista para usar, sin que el cliente tenga que programar nada.
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend:** Next.js (App Router)
+* **Estilos:** TailwindCSS
+* **Backend / DB:** Supabase
+* **Lenguaje:** TypeScript
+
+---
+
+## 📁 Estructura del proyecto
+
+/app → rutas principales
+/components → componentes reutilizables
+/lib → configuración (Supabase, utils)
+/services → lógica de negocio
+/types → tipado TypeScript
+
+---
+
+## ⚙️ Instalación
+
+1. Clonar el repositorio:
+
+git clone https://github.com/tuusuario/tahm-cult.git
+cd tahm-cult
+
+2. Instalar dependencias:
+
+npm install
+
+3. Configurar variables de entorno:
+
+Crear un archivo `.env.local`:
+
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+
+4. Ejecutar el proyecto:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔐 Autenticación
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Actualmente el sistema de autenticación está:
 
-## Learn More
+* Disponible solo para administradores
+* Oculto al usuario final
+* Usado para gestionar contenido internamente
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📌 Roadmap
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* [ ] Sistema multi-cliente (multi-tenant)
+* [ ] Panel de administración visual
+* [ ] Editor de contenido (tipo CMS)
+* [ ] Deploy automático por cliente
+* [ ] Integración de pagos
+* [ ] Dominio personalizado por cliente
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 💡 Modelo de negocio
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Tahm Cult está pensado como un producto digital:
+
+* Venta de páginas personalizadas
+* Suscripción mensual (hosting + mantenimiento)
+* Posible expansión a SaaS
+
+---
+
+## 🤝 Contribución
+
+Proyecto en desarrollo activo.
+
+---
+
+## 👨‍💻 Autor
+
+**Maximo Garmasar Vazquez**
+Frontend Developer
+
+* GitHub: https://github.com/maximogarmasarvazquez
+* LinkedIn: https://www.linkedin.com/in/maximogarmasarvazquez/
+
+---
+
+## 📄 Licencia
+
+MIT License
