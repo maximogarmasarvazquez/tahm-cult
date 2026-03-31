@@ -10,10 +10,8 @@ import { useRouter } from "next/navigation";
 interface Props {
   styles: Style[];
   clientId: string;
-
-  mode: "create" | "edit"; // 🔥 clave
-  post?: Post; // 🔥 solo para edit
-
+  mode: "create" | "edit";
+  post?: Post;
   onClose?: () => void;
   onUpdated?: (post: Post) => void;
 }
@@ -28,7 +26,6 @@ export default function PostForm({
 }: Props) {
   const router = useRouter();
 
-  // 🔥 estados iniciales dinámicos
   const [title, setTitle] = useState(post?.title || "");
   const [description, setDescription] = useState(post?.description || "");
   const [category, setCategory] = useState(post?.category || "");
@@ -47,7 +44,6 @@ export default function PostForm({
     try {
       let currentPost = post;
 
-      // 🆕 CREATE
       if (mode === "create") {
         currentPost = await postsService.create({
           title,
@@ -58,7 +54,6 @@ export default function PostForm({
         });
       }
 
-      // ✏️ UPDATE
       if (mode === "edit" && post) {
         await postsService.update(post.id, {
           title,
@@ -78,7 +73,6 @@ export default function PostForm({
 
       if (!currentPost) return;
 
-      // 📷 imagen
       if (file) {
         const imageUrl = await uploadImage(file);
 
@@ -91,7 +85,6 @@ export default function PostForm({
         });
       }
 
-      // 🎥 video
       if (externalUrl) {
         await postMediaService.create({
           post_id: currentPost.id,
@@ -102,7 +95,6 @@ export default function PostForm({
         });
       }
 
-      // 🔥 comportamiento según modo
       if (mode === "create") {
         resetForm();
         router.refresh();
@@ -127,72 +119,108 @@ export default function PostForm({
   };
 
   return (
-    <div className="space-y-6">
-      {/* 🎨 STYLE */}
-      <select
-        value={styleId ?? ""}
-        onChange={(e) => setStyleId(e.target.value)}
-        className="border p-2 w-full"
-      >
-        <option value="">Seleccionar estilo</option>
-        {styles.map((style) => (
-          <option key={style.id} value={style.id}>
-            {style.name}
-          </option>
-        ))}
-      </select>
+    <div className="max-w-2xl mx-auto space-y-8 p-6 bg-white text-black dark:bg-zinc-900 dark:text-white rounded-2xl shadow-lg border border-gray-200 dark:border-zinc-700">
 
-      {/* ⚡ PREVIEW */}
+      {/* HEADER */}
+      <div>
+        <h1 className="text-2xl font-bold">
+          {mode === "create" ? "Crear Post" : "Editar Post"}
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Completa la información del contenido
+        </p>
+      </div>
+
+      {/* STYLE SELECT */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Estilo</label>
+        <select
+          value={styleId ?? ""}
+          onChange={(e) => setStyleId(e.target.value)}
+          className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white text-black dark:bg-zinc-800 dark:text-white dark:border-zinc-600 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+        >
+          <option value="">Seleccionar estilo</option>
+          {styles.map((style) => (
+            <option key={style.id} value={style.id}>
+              {style.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* PREVIEW */}
       <div
-        className="p-4 rounded-xl border"
+        className="p-5 rounded-xl border shadow-sm transition-all"
         style={{
           backgroundColor: selectedStyle?.bg_color || "#fff",
           color: selectedStyle?.text_color || "#000",
           fontFamily: selectedStyle?.font_family || "inherit",
         }}
       >
-        <h2 className="text-xl font-bold">
+        <h2 className="text-xl font-semibold mb-2">
           {title || "Título preview"}
         </h2>
-        <p>{description || "Descripción preview..."}</p>
+        <p className="text-sm opacity-80">
+          {description || "Descripción preview..."}
+        </p>
       </div>
 
-      {/* 🧾 FORM */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          placeholder="Título"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="border p-2 w-full"
-        />
+      {/* FORM */}
+      <form onSubmit={handleSubmit} className="space-y-5">
 
-        <textarea
-          placeholder="Descripción"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="border p-2 w-full"
-        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Título</label>
+          <input
+            placeholder="Ej: Tattoo minimalista"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white text-black dark:bg-zinc-800 dark:text-white dark:border-zinc-600 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+          />
+        </div>
 
-        <input
-          placeholder="Categoría"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="border p-2 w-full"
-        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Descripción</label>
+          <textarea
+            placeholder="Describe el trabajo..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            className="w-full p-3 rounded-lg border border-gray-300 bg-white text-black dark:bg-zinc-800 dark:text-white dark:border-zinc-600 resize-none focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+          />
+        </div>
 
-        <input
-          type="file"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Categoría</label>
+          <input
+            placeholder="Ej: Tattoo / Ropa / Arte"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white text-black dark:bg-zinc-800 dark:text-white dark:border-zinc-600 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+          />
+        </div>
 
-        <input
-          placeholder="Enlace de video"
-          value={externalUrl}
-          onChange={(e) => setExternalUrl(e.target.value)}
-          className="border p-2 w-full"
-        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Imagen</label>
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-black file:text-white hover:file:opacity-90"
+          />
+        </div>
 
-        <button className="bg-black text-white px-4 py-2 rounded">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Video (URL)</label>
+          <input
+            placeholder="https://..."
+            value={externalUrl}
+            onChange={(e) => setExternalUrl(e.target.value)}
+            className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-white text-black dark:bg-zinc-800 dark:text-white dark:border-zinc-600 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+          />
+        </div>
+
+        <button
+          className="w-full h-11 rounded-lg bg-black text-white dark:bg-white dark:text-black font-medium hover:opacity-90 transition"
+        >
           {mode === "create" ? "Crear Post" : "Guardar cambios"}
         </button>
       </form>
