@@ -1,8 +1,8 @@
-# 🎨 Tahm Cult
+# 🎨 Cult Hunter
 
-**Tahm Cult** es una plataforma web diseñada para artistas y emprendedores que necesitan mostrar su trabajo de forma profesional, moderna y personalizable.
+**Cult Hunter** es una plataforma web diseñada para artistas y emprendedores que necesitan mostrar su trabajo de forma profesional, moderna y personalizable.
 
-Pensado especialmente para tatuadores, marcas de ropa y creadores visuales, Tahm Cult permite tener una presencia online atractiva sin necesidad de conocimientos técnicos.
+Pensado especialmente para tatuadores, marcas de ropa y creadores visuales, Cult Hunter permite tener una presencia online atractiva sin necesidad de conocimientos técnicos.
 
 ---
 

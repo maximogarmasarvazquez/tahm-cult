@@ -20,31 +20,14 @@ export default function PostCard({ post, onDelete, onEdit }: Props) {
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden shadow-md border transition hover:scale-[1.02]"
+      className="group relative rounded-2xl overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-300"
       style={{
         backgroundColor: style?.bg_color || "#fff",
         color: style?.text_color || "#000",
         fontFamily: style?.font_family || "inherit",
       }}
     >
-      {/* 🔥 ACTIONS */}
-      <div className="absolute top-2 right-2 flex gap-2 z-10">
-        <button
-          onClick={() => onEdit?.(post)}
-          className="bg-black/60 hover:bg-blue-600 text-white p-2 rounded-full"
-        >
-          <Pencil size={18} />
-        </button>
-
-        <button
-          onClick={handleDelete}
-          className="bg-black/60 hover:bg-red-600 text-white p-2 rounded-full"
-        >
-          <Trash2 size={18} />
-        </button>
-      </div>
-
-      {/* 🖼️ IMAGE */}
+      {/* 🖼️ MEDIA */}
       {media?.type === "image" && media?.url && (
         <img
           src={media.url}
@@ -53,21 +36,48 @@ export default function PostCard({ post, onDelete, onEdit }: Props) {
         />
       )}
 
-      {/* 🎥 VIDEO */}
       {media?.type === "video" && media?.external_url && (
         <iframe
           className="w-full h-56"
           src={media.external_url}
           title={post.title}
+          allowFullScreen
         />
       )}
 
+      {!media && (
+        <div className="w-full h-56 flex items-center justify-center text-sm opacity-50">
+          Sin contenido multimedia
+        </div>
+      )}
+
+      {/* 🔥 ACTIONS (hover) */}
+      <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+        <button
+          onClick={() => onEdit?.(post)}
+          className="p-2 rounded-full bg-black/70 hover:bg-blue-600 text-white"
+        >
+          <Pencil size={16} />
+        </button>
+
+        <button
+          onClick={handleDelete}
+          className="p-2 rounded-full bg-black/70 hover:bg-red-600 text-white"
+        >
+          <Trash2 size={16} />
+        </button>
+      </div>
+
       {/* CONTENT */}
       <div className="p-4 space-y-2">
-        <h2 className="text-xl font-bold">{post.title}</h2>
+        <h2 className="text-lg font-semibold leading-tight">
+          {post.title}
+        </h2>
 
         {post.description && (
-          <p className="text-sm opacity-80">{post.description}</p>
+          <p className="text-sm opacity-80 line-clamp-3">
+            {post.description}
+          </p>
         )}
       </div>
     </div>
